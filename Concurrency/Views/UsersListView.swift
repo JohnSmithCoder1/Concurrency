@@ -14,10 +14,14 @@ struct UsersListView: View {
         NavigationView {
             List {
                 ForEach(viewModel.users) { user in
-                    VStack(alignment: .leading) {
-                        Text(user.name)
-                            .font(.title)
-                        Text(user.email)
+                    NavigationLink {
+                        PostsListView(userId: user.id)
+                    } label: {
+                        VStack(alignment: .leading) {
+                            Text(user.name)
+                                .font(.title)
+                            Text(user.email)
+                        }
                     }
                 }
             }
