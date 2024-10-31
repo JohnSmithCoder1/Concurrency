@@ -30,6 +30,13 @@ struct UsersListView: View {
                     ProgressView()
                 }
             }
+            .alert("Application Error", isPresented: $viewModel.showAlert, actions: {
+                Button("OK") {}
+            }, message: {
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                }
+            })
             .navigationTitle("Users")
             .listStyle(.plain)
             .onAppear {
