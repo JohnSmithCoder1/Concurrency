@@ -13,5 +13,7 @@ struct User: Codable, Identifiable {
     let name: String
     let username: String
     let email: String
-    let test: String
+    
+    // Use for testing API Error alert
+//    let test: String
 }
