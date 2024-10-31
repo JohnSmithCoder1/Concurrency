@@ -25,6 +25,11 @@ struct UsersListView: View {
                     }
                 }
             }
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
             .navigationTitle("Users")
             .listStyle(.plain)
             .onAppear {
