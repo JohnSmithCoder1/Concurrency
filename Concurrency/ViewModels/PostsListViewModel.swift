@@ -9,21 +9,31 @@ import Foundation
 
 class PostsListViewModel: ObservableObject {
     @Published var posts: [Post] = []
+    @Published var isLoading = false
     
     var userId: Int?
     
     func fetchPosts() {
         if let userId {
             let apiService = APIService(urlString: "https://jsonplaceholder.typicode.com/users/\(userId)/posts")
+            isLoading.toggle()
             
-            apiService.getJSON { (result: Result<[Post], APIError>) in
-                switch result {
-                case .success(let posts):
-                    DispatchQueue.main.async {
-                        self.posts = posts
+            // using asyncAfter to test loading spinner
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+                apiService.getJSON { (result: Result<[Post], APIError>) in
+                    defer {
+                        DispatchQueue.main.async {
+                            self.isLoading.toggle()
+                        }
                     }
-                case .failure(let error):
-                    print(error)
+                    switch result {
+                    case .success(let posts):
+                        DispatchQueue.main.async {
+                            self.posts = posts
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
                 }
             }
         }
