@@ -15,31 +15,21 @@ class PostsListViewModel: ObservableObject {
     
     var userId: Int?
     
-    func fetchPosts() {
+    @MainActor
+    func fetchPosts() async {
         if let userId {
             let apiService = APIService(urlString: "https://jsonplaceholder.typicode.com/users/\(userId)/posts")
-            isLoading.toggle()
+            isLoading = true
             
-            // using asyncAfter to test loading spinner
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
-                apiService.getJSON { (result: Result<[Post], APIError>) in
-                    defer {
-                        DispatchQueue.main.async {
-                            self.isLoading.toggle()
-                        }
-                    }
-                    switch result {
-                    case .success(let posts):
-                        DispatchQueue.main.async {
-                            self.posts = posts
-                        }
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            self.errorMessage = error.localizedDescription + "\nPlease contact the developer and provide this error and the steps to reproduce."
-                            self.showAlert.toggle()
-                        }
-                    }
-                }
+            defer {
+                isLoading = false
+            }
+            
+            do {
+                posts = try await apiService.getJSON()
+            } catch {
+                showAlert = true
+                errorMessage = error.localizedDescription
             }
         }
     }

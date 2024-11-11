@@ -39,8 +39,8 @@ struct UsersListView: View {
             })
             .navigationTitle("Users")
             .listStyle(.plain)
-            .onAppear {
-                viewModel.fetchUsers()
+            .task {
+                await viewModel.fetchUsers()
             }
         }
     }
